@@ -1,0 +1,6 @@
+[submodule "lib_glfw/glfw"]
+	path = lib_glfw/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "lib_sfml/SFML"]
+	path = lib_sfml/SFML
+	url = https://github.com/SFML/SFML.git
