@@ -39,7 +39,7 @@ class LibGlfw : public IGraphicLib
 		GLFWwindow		*_window;
         int             _win_height;
         int             _win_width;
-        size_t          _sprite_id;
+        GLuint          _sprite_id;
 		static std::map<type_e, std::map<cardinal_e, std::string> > _sprites;
         static int      _glfw_key;
 };

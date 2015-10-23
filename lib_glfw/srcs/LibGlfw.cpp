@@ -127,8 +127,7 @@ void                LibGlfw::_display_sprite(int const x, int const y, std::stri
     glBindTexture(GL_TEXTURE_2D, this->_sprite_id);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    gluBuild2DMipmaps(GL_TEXTURE_2D, 4, img->getWidth(), img->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, img->getDataForOpenGL());
-    glfwFreeImage(&img);
+    glTexImage2D(GL_TEXTURE_2D, 4, GL_RGBA, img->getWidth(), img->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img->getDataForOpenGL());
     glBegin(GL_QUADS);
     glTexCoord2f(0, 0);
     glVertex2f(x, y);
@@ -143,7 +142,10 @@ void                LibGlfw::_display_sprite(int const x, int const y, std::stri
 
 void                LibGlfw::_key_callback(GLFWwindow *win, int key, int scancode, int action, int mods)
 {
-    if ((key == GLFW_KEY_ESC) ||
+    (void)win;
+    (void)scancode;
+    (void)mods;
+    if (((key == GLFW_KEY_ESCAPE) ||
             (key == GLFW_KEY_W) ||
             (key == GLFW_KEY_A) ||
             (key == GLFW_KEY_S) ||
@@ -151,6 +153,6 @@ void                LibGlfw::_key_callback(GLFWwindow *win, int key, int scancod
             (key == GLFW_KEY_UP) ||
             (key == GLFW_KEY_DOWN) ||
             (key == GLFW_KEY_RIGHT) ||
-            (key == GLFW_KEY_LEFT))
+            (key == GLFW_KEY_LEFT)) && (action == GLFW_PRESS))
         LibGlfw::_glfw_key = key;
 }

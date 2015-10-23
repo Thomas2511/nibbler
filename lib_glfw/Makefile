@@ -31,21 +31,23 @@ NAME			= lib_glfw.so
 ROOT			= $(shell pwd)
 OBJDIR			= $(ROOT)/objs
 SRCDIR			= $(ROOT)/srcs
-PARENT_SRCDIR	= $(ROOT)/../srcs
 INCDIR			= $(ROOT)/includes
-PARENT_INCDIR	= $(ROOT)/../srcs
 GLFW_LIB_DIR	= $(ROOT)/glfw
 
 # lib compilation flags
-GLFW_LIB_P		= $(GLFW_LIB_DIR)/src -lglfw3 $(GLFW_FRAMEWORK)
+GLFW_LIB_P		= -L $(GLFW_LIB_DIR)/src
 GLFW_FRAMEWORK	= -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo -framework GLUT
 
 # general compilation flags
-INCFLAGS		= -I $(INCDIR) -I $(PARENT_INCDIR) -I $(GLFW_LIB_DIR)/include
+INCFLAGS		= -I $(INCDIR) -I $(GLFW_LIB_DIR)/include
 CXXFLAGS		= -Wall -Wextra -Werror -std=c++11 -fPIC
+LDFLAGS			= -shared
+LINKING			= -lglfw $(GLFW_FRAMEWORK)
 
 # source files
-SRC				= LibGlfw.cpp
+SRC				= LibGlfw.cpp \
+				  Position.cpp \
+				  Direction.cpp
 
 # obj
 OBJS			= $(patsubst %.cpp, $(OBJDIR)/%.o, $(SRC))
@@ -56,11 +58,11 @@ all: $(OBJDIR) $(NAME)
 
 $(NAME): $(OBJS)
 	@printf "$(OK_COLOR)Compiling executable...$(NO_COLOR)\n"
-	@$(CXX) -shared $^ -o $@ $(GLFW_LIB_P) $(PARENT_SRCDIR)/Position.cpp $(PARENT_SRCDIR)/Direction.cpp
+	@$(CXX) $(LDFLAGS) $(GLFW_LIB_P) $^ -o $@ $(LINKING)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@printf "$(OK_COLOR)Compiling objects...$(NO_COLOR)\n"
-	@$(CXX) $< -o $@ -c $(INCFLAGS) $(CXXFLAGS)
+	@$(CXX) $(CXXFLAGS) $(INCFLAGS) $< -o $@ -c
 
 $(OBJDIR):
 	@$(MKDIR) $@
