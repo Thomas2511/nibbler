@@ -21,6 +21,19 @@
 class LibGlfw : public IGraphicLib
 {
 	public:
+        class LibGlfwException : public std::exception
+        {
+        };
+        class InitializationErrorException : public LibGlfwException
+        {
+            public:
+                virtual const char *    what() const throw();
+        };
+        class WindowCreationErrorException : public LibGlfwException
+        {
+            public:
+                virtual const char *    what() const throw();
+        };
 		LibGlfw(int height, int width, std::string winName);
 		LibGlfw(LibGlfw const & src);
 		virtual ~LibGlfw(void);

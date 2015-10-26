@@ -42,23 +42,23 @@ int				main(void)
 	IGraphicLib		*lib;
 	std::list<int>	scores;
 
-	dl_handle = dlopen("lib_ncurses.so", RTLD_LAZY | RTLD_LOCAL);
+	dl_handle = dlopen("lib_glfw.so", RTLD_LAZY | RTLD_LOCAL);
 	if (!dl_handle)
 	{
-		std::cout << "lol" << std::endl;
+		std::cerr << dlerror() << std::endl;
 		return 1;
 	}
 
 	lnc = (IGraphicLib *(*)(int, int, std::string)) (dlsym(dl_handle, "getDynLibPointer"));
 	if (!lnc)
 	{
-		std::cout << "pouet" << std::endl;
+		std::cerr << dlerror() << std::endl;
 		return 1;
 	}
 	del = (void (*)(IGraphicLib *)) (dlsym(dl_handle, "delLibPointer"));
 	if (!del)
 	{
-		std::cout << "bleh" << std::endl;
+		std::cerr << dlerror() << std::endl;
 		return 1;
 	}
 	lst.push_back(obj);

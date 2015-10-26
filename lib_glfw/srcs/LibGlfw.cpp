@@ -52,6 +52,18 @@ std::map<type_e, std::map<cardinal_e, std::string> >		LibGlfw::_sprites =
     {UNKNOWN, { {NORTH, "?"} }}
 };
 
+int                     LibGlfw::_glfw_key = 0;
+
+const char              *LibGlfw::InitializationErrorException::what() const throw()
+{
+    return ("Failed to initialize the GLFW library");
+}
+
+const char              *LibGlfw::WindowCreationErrorException::what() const throw()
+{
+    return ("Failed to create the GLFW window");
+}
+
 LibGlfw::LibGlfw(void)
 {
     if (glfwInit() != GL_TRUE)
@@ -92,10 +104,25 @@ LibGlfw::LibGlfw(LibGlfw const & src)
     return ;
 }
 
+LibGlfw::~LibGlfw(void)
+{
+    return ;
+}
+
+LibGlfw             &LibGlfw::operator=(LibGlfw const & rhs)
+{
+    this->_window = rhs._window;
+    this->_win_height = rhs._win_height;
+    this->_win_width = rhs._win_width;
+    this->_sprite_id = rhs._sprite_id;
+    return *this;
+}
+
 int                 LibGlfw::keyhandler(void)
 {
     return LibGlfw::_glfw_key;
 }
+
 
 void                LibGlfw::display(std::list<IGameObject*> const game_objects){
     std::list<IGameObject*>::const_iterator								obj;
@@ -117,10 +144,16 @@ void                LibGlfw::display(std::list<IGameObject*> const game_objects)
     return ;
 }
 
+void                LibGlfw::display_score(std::list<int> const scores)
+{
+    (void)scores;
+    return ;
+}
+
 void                LibGlfw::_display_sprite(int const x, int const y, std::string const sprite)
 {
     std::stringstream       ss;
-    Image                   *img;
+    Image                   *img = new Image();
 
     ss << "../resources/" << sprite;
     glGenTextures(1, &(this->_sprite_id));
@@ -155,4 +188,17 @@ void                LibGlfw::_key_callback(GLFWwindow *win, int key, int scancod
             (key == GLFW_KEY_RIGHT) ||
             (key == GLFW_KEY_LEFT)) && (action == GLFW_PRESS))
         LibGlfw::_glfw_key = key;
+}
+
+extern "C"
+{
+	IGraphicLib			*getDynLibPointer(int const x, int const  y, std::string const winName)
+	{
+		return new LibGlfw(x, y, winName);
+	}
+
+	void				delLibPointer(IGraphicLib *lib_ptr)
+	{
+		delete lib_ptr;
+	}
 }

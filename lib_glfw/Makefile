@@ -42,10 +42,11 @@ GLFW_FRAMEWORK	= -framework Cocoa -framework OpenGL -framework IOKit -framework 
 INCFLAGS		= -I $(INCDIR) -I $(GLFW_LIB_DIR)/include
 CXXFLAGS		= -Wall -Wextra -Werror -std=c++11 -fPIC
 LDFLAGS			= -shared
-LINKING			= -lglfw $(GLFW_FRAMEWORK)
+LINKING			= -lglfw3 $(GLFW_FRAMEWORK)
 
 # source files
 SRC				= LibGlfw.cpp \
+				  TGALoader.cpp \
 				  Position.cpp \
 				  Direction.cpp
 
@@ -54,15 +55,15 @@ OBJS			= $(patsubst %.cpp, $(OBJDIR)/%.o, $(SRC))
 
 .PHONY: all clean fclean re
 
-all: $(OBJDIR) $(NAME)
+all: $(OBJDIR) glfw/CMakeLists.txt $(NAME)
 
 $(NAME): $(OBJS)
 	@printf "$(OK_COLOR)Compiling executable...$(NO_COLOR)\n"
-	@$(CXX) $(LDFLAGS) $(GLFW_LIB_P) $^ -o $@ $(LINKING)
+	$(CXX) $(LDFLAGS) $(GLFW_LIB_P) $^ -o $@ $(LINKING)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@printf "$(OK_COLOR)Compiling objects...$(NO_COLOR)\n"
-	@$(CXX) $(CXXFLAGS) $(INCFLAGS) $< -o $@ -c
+	$(CXX) $(CXXFLAGS) $(INCFLAGS) $< -o $@ -c
 
 $(OBJDIR):
 	@$(MKDIR) $@
