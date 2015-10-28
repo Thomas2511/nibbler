@@ -48,7 +48,6 @@ int				main(void)
 		std::cerr << dlerror() << std::endl;
 		return 1;
 	}
-
 	lnc = (IGraphicLib *(*)(int, int, std::string)) (dlsym(dl_handle, "getDynLibPointer"));
 	if (!lnc)
 	{
@@ -65,11 +64,9 @@ int				main(void)
 	scores.push_back(0);
 	scores.push_back(2000);
 	lib = lnc(600, 480, "Nibbler");
-
 	lib->display(lst);
 	//lib->display_score(scores);
 	while(lib->keyhandler() != 27);
-
 	del(lib);
 	dlclose(dl_handle);
 

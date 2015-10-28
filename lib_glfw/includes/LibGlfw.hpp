@@ -53,6 +53,7 @@ class LibGlfw : public IGraphicLib
         int             _win_height;
         int             _win_width;
         GLuint          _sprite_id;
+        static std::map<int, int> _key_map;
 		static std::map<type_e, std::map<cardinal_e, std::string> > _sprites;
         static int      _glfw_key;
 };

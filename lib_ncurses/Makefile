@@ -31,19 +31,20 @@ NAME			= lib_ncurses.so
 ROOT			= $(shell pwd)
 OBJDIR			= $(ROOT)/objs
 SRCDIR			= $(ROOT)/srcs
-PARENT_SRCDIR	= $(ROOT)/../srcs
 INCDIR			= $(ROOT)/includes
-PARENT_INCDIR	= $(ROOT)/../srcs
 
 # lib compilation flags
 NCURSES_LIB_P	= -lncurses
 
 # general compilation flags
-INCFLAGS		= -I $(INCDIR) -I $(PARENT_INCDIR)
+INCFLAGS		= -I $(INCDIR)
 CXXFLAGS		= -Wall -Wextra -Werror -std=c++11 -fPIC
+LDFLAGS			= -shared
 
 # source files
-SRC				= LibNcurses.cpp
+SRC				= LibNcurses.cpp \
+				  Position.cpp \
+				  Direction.cpp
 
 # obj
 OBJS			= $(patsubst %.cpp, $(OBJDIR)/%.o, $(SRC))
@@ -54,11 +55,11 @@ all: $(OBJDIR) $(NAME)
 
 $(NAME): $(OBJS)
 	@printf "$(OK_COLOR)Compiling executable...$(NO_COLOR)\n"
-	@$(CXX) -shared $^ -o $@ $(NCURSES_LIB_P) $(PARENT_SRCDIR)/Position.cpp $(PARENT_SRCDIR)/Direction.cpp
+	@$(CXX) $(LDFLAGS) $(NCURSES_LIB_P) $^ -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@printf "$(OK_COLOR)Compiling objects...$(NO_COLOR)\n"
-	@$(CXX) $< -o $@ -c $(INCFLAGS) $(CXXFLAGS)
+	@$(CXX) $(CXXFLAGS) $(INCFLAGS) $< -o $@ -c
 
 $(OBJDIR):
 	@$(MKDIR) $@

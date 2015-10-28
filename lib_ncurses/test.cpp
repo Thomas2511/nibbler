@@ -41,6 +41,7 @@ int				main(void)
 	void			(*del)(IGraphicLib *);
 	IGraphicLib		*lib;
 	std::list<int>	scores;
+    int             i;
 
 	dl_handle = dlopen("lib_ncurses.so", RTLD_LAZY | RTLD_LOCAL);
 	if (!dl_handle)
@@ -66,9 +67,10 @@ int				main(void)
 	scores.push_back(2000);
 	lib = lnc(45, 120, "Nibbler");
 
-	lib->display(lst);
-	lib->display_score(scores);
-	while(lib->keyhandler() != 27);
+	//lib->display(lst);
+	//lib->display_score(scores);
+	while((i = lib->keyhandler()) != 27)
+        std::cout << i << std::endl;
 
 	del(lib);
 	dlclose(dl_handle);

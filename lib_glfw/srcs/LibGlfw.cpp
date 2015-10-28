@@ -13,6 +13,19 @@
 #include "TGALoader.hpp"
 #include "LibGlfw.hpp"
 
+std::map<int, int>      LibGlfw::_key_map =
+{
+    {GLFW_KEY_ESCAPE, 27},
+    {GLFW_KEY_W, 119},
+    {GLFW_KEY_A, 97},
+    {GLFW_KEY_S, 115},
+    {GLFW_KEY_D, 100},
+    {GLFW_KEY_UP, 259},
+    {GLFW_KEY_LEFT, 260},
+    {GLFW_KEY_DOWN, 258},
+    {GLFW_KEY_RIGHT, 261}
+};
+
 std::map<type_e, std::map<cardinal_e, std::string> >		LibGlfw::_sprites =
 {
     {SNAKE_HEAD_1,{ {NORTH, "classy_head_B.tga"},
@@ -120,6 +133,7 @@ LibGlfw             &LibGlfw::operator=(LibGlfw const & rhs)
 
 int                 LibGlfw::keyhandler(void)
 {
+    glfwPollEvents();
     return LibGlfw::_glfw_key;
 }
 
@@ -135,8 +149,8 @@ void                LibGlfw::display(std::list<IGameObject*> const game_objects)
         if (type != LibGlfw::_sprites.end())
         {
             dir = type->second.find((*obj)->getCurrentDirection().getCardinal());
-            if (dir != type->second.end())
-                this->_display_sprite((*obj)->getPosition().getX(), (*obj)->getPosition().getY(), dir->second);
+            if (dir != type->second.end()){ std::cout << "pouet" << std::endl;}
+                //this->_display_sprite((*obj)->getPosition().getX(), (*obj)->getPosition().getY(), dir->second);
         }
     }
     glfwSwapBuffers(this->_window);
@@ -146,6 +160,7 @@ void                LibGlfw::display(std::list<IGameObject*> const game_objects)
 
 void                LibGlfw::display_score(std::list<int> const scores)
 {
+    //TODO
     (void)scores;
     return ;
 }
@@ -178,16 +193,10 @@ void                LibGlfw::_key_callback(GLFWwindow *win, int key, int scancod
     (void)win;
     (void)scancode;
     (void)mods;
-    if (((key == GLFW_KEY_ESCAPE) ||
-            (key == GLFW_KEY_W) ||
-            (key == GLFW_KEY_A) ||
-            (key == GLFW_KEY_S) ||
-            (key == GLFW_KEY_D) ||
-            (key == GLFW_KEY_UP) ||
-            (key == GLFW_KEY_DOWN) ||
-            (key == GLFW_KEY_RIGHT) ||
-            (key == GLFW_KEY_LEFT)) && (action == GLFW_PRESS))
-        LibGlfw::_glfw_key = key;
+
+    if (action == GLFW_PRESS)
+        if (_key_map.find(key) != _key_map.end())
+            LibGlfw::_glfw_key = _key_map.find(key)->second;
 }
 
 extern "C"
