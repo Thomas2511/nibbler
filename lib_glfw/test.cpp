@@ -23,7 +23,7 @@ class Trololo : public IGameObject
 
 		Trololo				&operator=(Trololo const & rhs) { this->_pos = rhs._pos; this->_type = rhs._type; return *this;}
 		Position			getPosition() const { return _pos; };
-		Direction			getCurrentDirection() const { return Direction(NORTH_EAST); };
+		Direction			getCurrentDirection() const { return Direction(NORTH); };
 		type_e				getType() const { return _type; };
 
 	private:
@@ -35,7 +35,7 @@ class Trololo : public IGameObject
 int				main(void)
 {
 	std::list<IGameObject*>		lst;
-	Trololo			*obj = new Trololo(10, 10, SNAKE_BODY_1);
+	Trololo			*obj = new Trololo(10, 10, FOOD);
 	void			*dl_handle;
 	IGraphicLib		*(*lnc)(int, int, std::string);
 	void			(*del)(IGraphicLib *);

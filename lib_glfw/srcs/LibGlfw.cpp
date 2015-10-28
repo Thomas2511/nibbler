@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "TGALoader.hpp"
+#include "BMPLoader.hpp"
 #include "LibGlfw.hpp"
 
 std::map<int, int>      LibGlfw::_key_map =
@@ -149,12 +149,10 @@ void                LibGlfw::display(std::list<IGameObject*> const game_objects)
         if (type != LibGlfw::_sprites.end())
         {
             dir = type->second.find((*obj)->getCurrentDirection().getCardinal());
-            if (dir != type->second.end()){ std::cout << "pouet" << std::endl;}
-                //this->_display_sprite((*obj)->getPosition().getX(), (*obj)->getPosition().getY(), dir->second);
+            if (dir != type->second.end())
+                this->_display_sprite((*obj)->getPosition().getX(), (*obj)->getPosition().getY(), dir->second);
         }
     }
-    glfwSwapBuffers(this->_window);
-    glfwPollEvents();
     return ;
 }
 
@@ -168,24 +166,31 @@ void                LibGlfw::display_score(std::list<int> const scores)
 void                LibGlfw::_display_sprite(int const x, int const y, std::string const sprite)
 {
     std::stringstream       ss;
-    Image                   *img = new Image();
+    BMPImage                *img = new BMPImage();
 
-    ss << "../resources/" << sprite;
+    ss << "../resources/classy/" << sprite;
+    img->loadBMP(ss.str().c_str());
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+    glClear( GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &(this->_sprite_id));
     glBindTexture(GL_TEXTURE_2D, this->_sprite_id);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 4, GL_RGBA, img->getWidth(), img->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img->getDataForOpenGL());
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->getWidth(), img->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img->getData());
     glBegin(GL_QUADS);
-    glTexCoord2f(0, 0);
+    glTexCoord2f(0.0, 0.0);
     glVertex2f(x, y);
-    glTexCoord2f(1, 0);
-    glVertex2f(x + 32, y);
-    glTexCoord2f(1, 1);
-    glVertex2f(x + 32, y + 32);
-    glTexCoord2f(0, 1);
-    glVertex2f(x, y + 32);
+    glTexCoord2f(1.0, 0.0);
+    glVertex2f(x + 32.0, y);
+    glTexCoord2f(1.0, 1.0);
+    glVertex2f(x + 32.0, y + 32.0);
+    glTexCoord2f(0.0, 1.0);
+    glVertex2f(x, y + 32.0);
     glEnd();
+    glfwSwapBuffers(this->_window);
 }
 
 void                LibGlfw::_key_callback(GLFWwindow *win, int key, int scancode, int action, int mods)

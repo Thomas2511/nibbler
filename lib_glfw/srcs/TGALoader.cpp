@@ -1,5 +1,6 @@
 
 #include <cstdio>
+#include <iostream>
 #include "TGALoader.hpp"
 
 const char *        Image::TGAFileOpenException::what() const throw()
@@ -68,16 +69,16 @@ void            Image::loadTGA(std::string filename)
     fread (ucHeader, sizeof(unsigned char) * 18, 1, pFile);
     while (ucHeader[0]-- > 0)
         fread (&temp, sizeof(unsigned char), 1, pFile);
-    _imageWidth = ucHeader[13] * 256 + ucHeader[12];
-    _imageHeight = ucHeader[15] * 256 + ucHeader[14];
-    _bytesPerPixel = ucHeader[16] / 8;
+    this->_imageWidth = ucHeader[13] * 256 + ucHeader[12];
+    this->_imageHeight = ucHeader[15] * 256 + ucHeader[14];
+    this->_bytesPerPixel = ucHeader[16] / 8;
     if ((_imageWidth <= 0) || (_imageHeight <= 0) || ((_bytesPerPixel != 1) && (_bytesPerPixel != 3) && (_bytesPerPixel != 4)))
     {
         fclose (pFile);
         throw TGAFileInvalidHeaderException();
     }
     // allocate the image-buffer
-    _Pixels.resize(_imageWidth * _imageHeight * 4);
+    this->_Pixels.resize(_imageWidth * _imageHeight * 4);
     // call the appropriate loader-routine
     if (ucHeader[2] == 2)
         _loadUncompressedTGA(pFile);

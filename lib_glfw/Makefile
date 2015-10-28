@@ -46,7 +46,7 @@ LINKING			= -lglfw3 $(GLFW_FRAMEWORK)
 
 # source files
 SRC				= LibGlfw.cpp \
-				  TGALoader.cpp \
+				  BMPLoader.cpp \
 				  Position.cpp \
 				  Direction.cpp
 
