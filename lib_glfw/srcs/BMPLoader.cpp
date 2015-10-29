@@ -33,14 +33,13 @@ BMPImage::BMPImage(BMPImage const & src)
 
 BMPImage::~BMPImage(void)
 {
+    delete[] this->_data;
     return ;
 }
 
 BMPImage        &BMPImage::operator=(BMPImage const &rhs)
 {
-    std::memcpy(this->_header, rhs._header, 54);
     this->_data = rhs._data;
-    this->_data_pos = rhs._data_pos;
     this->_width = rhs._width;
     this->_height = rhs._height;
     this->_image_size = rhs._image_size;
@@ -49,27 +48,22 @@ BMPImage        &BMPImage::operator=(BMPImage const &rhs)
 
 void             BMPImage::loadBMP(const char *filename)
 {
-    std::ifstream   file;
-    file.open(filename);
-    if (!file.is_open())
+    std::ifstream   in(filename, std::ios::binary);
+    uint8_t         *header = new uint8_t[54];
+
+    if (!in)
         throw BMPLoaderFileOpenException();
-	file.read(this->_header, 54);
-    if (!file)
-        throw BMPLoaderFileReadException();
-	if (this->_header[0] != 'B' && this->_header[1] != 'M')
-		throw BMPLoaderHeaderFormatException();
-	this->_data_pos = *(reinterpret_cast<int*>(&(this->_header[0x0A])));
-	this->_image_size = *(reinterpret_cast<int*>(&(this->_header[0x22])));
-	this->_width = *(reinterpret_cast<int*>(&(this->_header[0x12])));
-	this->_height = *(reinterpret_cast<int*>(&(this->_header[0x16])));
-	if (this->_image_size == 0)
-		this->_image_size = this->_width * this->_height * 3;
-	if (this->_data_pos == 0)
-		this->_data_pos = 54;
-	if (!(this->_data = reinterpret_cast<char*>(malloc(this->_image_size))))
-		throw BMPLoaderMallocException();
-	file.read(this->_data, this->_image_size);
-	file.close();
+    in.read(reinterpret_cast<char*>(header), 54);
+    if (header[0] != 'B' || header[1] != 'M')
+        throw BMPLoaderHeaderFormatException();
+	this->_image_size = *(reinterpret_cast<int*>(&(header[0x22])));
+	this->_width = *(reinterpret_cast<int*>(&(header[0x12])));
+	this->_height = *(reinterpret_cast<int*>(&(header[0x16])));
+    if (this->_image_size == 0)
+        this->_image_size = this->_width * this->_height * 3;
+    this->_data = new uint8_t[this->_image_size];
+    in.read(reinterpret_cast<char*>(this->_data), this->_image_size);
+    in.close();
 }
 
 unsigned int    BMPImage::getWidth(void)
@@ -82,7 +76,7 @@ unsigned int    BMPImage::getHeight(void)
     return this->_height;
 }
 
-char            *BMPImage::getData(void)
+unsigned char   *BMPImage::getData(void)
 {
     return this->_data;
 }

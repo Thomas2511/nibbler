@@ -28,44 +28,46 @@ std::map<int, int>      LibGlfw::_key_map =
 
 std::map<type_e, std::map<cardinal_e, std::string> >		LibGlfw::_sprites =
 {
-    {SNAKE_HEAD_1,{ {NORTH, "classy_head_B.tga"},
-                      {EAST, "classy_head_L.tga"},
-                      {WEST, "classy_head_R.tga"},
-                      {SOUTH, "classy_head_T.tga"} }},
-    {SNAKE_BODY_1,{ {NORTH, "classy_body_TB.tga"},
-                      {EAST, "classy_body_LR.tga"},
-                      {WEST, "classy_body_LR.tga"},
-                      {SOUTH, "classy_body_TB.tga"},
-                      {NORTH_EAST, "classy_BL.tga"},
-                      {NORTH_WEST, "classy_BR.tga"},
-                      {SOUTH_EAST, "classy_TL.tga"},
-                      {SOUTH_WEST, "classy_TR.tga"} }},
-    {SNAKE_TAIL_1,{ {NORTH, "classy_tail_T.tga"},
-                      {EAST, "classy_tail_R.tga"},
-                      {WEST, "classy_tail_L.tga"},
-                      {SOUTH, "classy_tail_B.tga"} }},
-    {SNAKE_HEAD_2,{ {NORTH, "classy_head_B.tga"},
-                      {EAST, "classy_head_L.tga"},
-                      {WEST, "classy_head_R.tga"},
-                      {SOUTH, "classy_head_T.tga"} }},
-    {SNAKE_BODY_2,{ {NORTH, "classy_body_TB.tga"},
-                      {EAST, "classy_body_LR.tga"},
-                      {WEST, "classy_body_LR.tga"},
-                      {SOUTH, "classy_body_TB.tga"},
-                      {NORTH_EAST, "classy_BL.tga"},
-                      {NORTH_WEST, "classy_BR.tga"},
-                      {SOUTH_EAST, "classy_TL.tga"},
-                      {SOUTH_WEST, "classy_TR.tga"} }},
-    {SNAKE_TAIL_2,{ {NORTH, "classy_tail_T.tga"},
-                      {EAST, "classy_tail_R.tga"},
-                      {WEST, "classy_tail_L.tga"},
-                      {SOUTH, "classy_tail_B.tga"} }},
-    {OBSTACLE, { {NORTH, "classy_obtacle.tga"} }},
-    {FOOD, { {NORTH, "classy_food.tga"} }},
+    {SNAKE_HEAD_1,{ {NORTH, "classy_head_B.bmp"},
+                      {EAST, "classy_head_L.bmp"},
+                      {WEST, "classy_head_R.bmp"},
+                      {SOUTH, "classy_head_T.bmp"} }},
+    {SNAKE_BODY_1,{ {NORTH, "classy_body_TB.bmp"},
+                      {EAST, "classy_body_LR.bmp"},
+                      {WEST, "classy_body_LR.bmp"},
+                      {SOUTH, "classy_body_TB.bmp"},
+                      {NORTH_EAST, "classy_BL.bmp"},
+                      {NORTH_WEST, "classy_BR.bmp"},
+                      {SOUTH_EAST, "classy_TL.bmp"},
+                      {SOUTH_WEST, "classy_TR.bmp"} }},
+    {SNAKE_TAIL_1,{ {NORTH, "classy_tail_T.bmp"},
+                      {EAST, "classy_tail_R.bmp"},
+                      {WEST, "classy_tail_L.bmp"},
+                      {SOUTH, "classy_tail_B.bmp"} }},
+    {SNAKE_HEAD_2,{ {NORTH, "classy_head_B.bmp"},
+                      {EAST, "classy_head_L.bmp"},
+                      {WEST, "classy_head_R.bmp"},
+                      {SOUTH, "classy_head_T.bmp"} }},
+    {SNAKE_BODY_2,{ {NORTH, "classy_body_TB.bmp"},
+                      {EAST, "classy_body_LR.bmp"},
+                      {WEST, "classy_body_LR.bmp"},
+                      {SOUTH, "classy_body_TB.bmp"},
+                      {NORTH_EAST, "classy_BL.bmp"},
+                      {NORTH_WEST, "classy_BR.bmp"},
+                      {SOUTH_EAST, "classy_TL.bmp"},
+                      {SOUTH_WEST, "classy_TR.bmp"} }},
+    {SNAKE_TAIL_2,{ {NORTH, "classy_tail_T.bmp"},
+                      {EAST, "classy_tail_R.bmp"},
+                      {WEST, "classy_tail_L.bmp"},
+                      {SOUTH, "classy_tail_B.bmp"} }},
+    {OBSTACLE, { {NORTH, "classy_obtacle.bmp"} }},
+    {FOOD, { {NORTH, "crate.bmp"} }},
     {UNKNOWN, { {NORTH, "?"} }}
 };
 
 int                     LibGlfw::_glfw_key = 0;
+
+const int               LibGlfw::_scale = 32;
 
 const char              *LibGlfw::InitializationErrorException::what() const throw()
 {
@@ -108,6 +110,8 @@ LibGlfw::LibGlfw(int height, int width, std::string winName) : _win_height(heigh
     glLoadIdentity();
     glOrtho(0, width, height, 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+    glClear( GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
     return ;
 }
 
@@ -153,6 +157,7 @@ void                LibGlfw::display(std::list<IGameObject*> const game_objects)
                 this->_display_sprite((*obj)->getPosition().getX(), (*obj)->getPosition().getY(), dir->second);
         }
     }
+    glfwSwapBuffers(this->_window);
     return ;
 }
 
@@ -163,34 +168,40 @@ void                LibGlfw::display_score(std::list<int> const scores)
     return ;
 }
 
+float               LibGlfw::getScale(void)
+{
+    return LibGlfw::_scale * (this->_win_height / 1000.0);
+}
+
 void                LibGlfw::_display_sprite(int const x, int const y, std::string const sprite)
 {
     std::stringstream       ss;
-    BMPImage                *img = new BMPImage();
+    BMPImage                img;
 
     ss << "../resources/classy/" << sprite;
-    img->loadBMP(ss.str().c_str());
-    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-    glClear( GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+    img.loadBMP(ss.str().c_str());
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &(this->_sprite_id));
     glBindTexture(GL_TEXTURE_2D, this->_sprite_id);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->getWidth(), img->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img->getData());
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.getWidth(), img.getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, img.getData());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0, 0.0);
-    glVertex2f(x, y);
+    glVertex2f(x * this->getScale(), y * this->getScale());
     glTexCoord2f(1.0, 0.0);
-    glVertex2f(x + 32.0, y);
+    glVertex2f((x * this->getScale()) + this->getScale(), y * this->getScale());
     glTexCoord2f(1.0, 1.0);
-    glVertex2f(x + 32.0, y + 32.0);
+    glVertex2f(x * this->getScale() + this->getScale(), y * this->getScale() + this->getScale());
     glTexCoord2f(0.0, 1.0);
-    glVertex2f(x, y + 32.0);
+    glVertex2f(x * this->getScale(), y * this->getScale() + this->getScale());
     glEnd();
-    glfwSwapBuffers(this->_window);
 }
 
 void                LibGlfw::_key_callback(GLFWwindow *win, int key, int scancode, int action, int mods)

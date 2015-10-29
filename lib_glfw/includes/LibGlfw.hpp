@@ -43,19 +43,21 @@ class LibGlfw : public IGraphicLib
 		int				keyhandler(void);
 		void			display(std::list<IGameObject*> const game_object);
 		void			display_score(std::list<int> const scores);
+        float           getScale(void);
 
 	private:
 		LibGlfw(void);
         void            _display_sprite(int const x, int const y, std::string const sprite);
         static void     _key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
-		GLFWwindow		*_window;
-        int             _win_height;
-        int             _win_width;
-        GLuint          _sprite_id;
+		GLFWwindow		    *_window;
+        float               _win_height;
+        float               _win_width;
+        GLuint              _sprite_id;
         static std::map<int, int> _key_map;
 		static std::map<type_e, std::map<cardinal_e, std::string> > _sprites;
-        static int      _glfw_key;
+        static int          _glfw_key;
+        static const int    _scale;
 };
 
 #endif

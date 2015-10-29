@@ -35,7 +35,8 @@ class Trololo : public IGameObject
 int				main(void)
 {
 	std::list<IGameObject*>		lst;
-	Trololo			*obj = new Trololo(10, 10, FOOD);
+	Trololo			*obj = new Trololo(1, 1, FOOD);
+	Trololo			*obj2 = new Trololo(2, 1, FOOD);
 	void			*dl_handle;
 	IGraphicLib		*(*lnc)(int, int, std::string);
 	void			(*del)(IGraphicLib *);
@@ -61,9 +62,10 @@ int				main(void)
 		return 1;
 	}
 	lst.push_back(obj);
+	lst.push_back(obj2);
 	scores.push_back(0);
 	scores.push_back(2000);
-	lib = lnc(600, 480, "Nibbler");
+	lib = lnc(1000, 1000, "Nibbler");
 	lib->display(lst);
 	//lib->display_score(scores);
 	while(lib->keyhandler() != 27);
