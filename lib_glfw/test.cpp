@@ -66,8 +66,8 @@ int				main(void)
 	scores.push_back(0);
 	scores.push_back(2000);
 	lib = lnc(1000, 1000, "Nibbler");
-	lib->display(lst);
-	//lib->display_score(scores);
+	//lib->display(lst);
+	lib->display_score(scores);
 	while(lib->keyhandler() != 27);
 	del(lib);
 	dlclose(dl_handle);

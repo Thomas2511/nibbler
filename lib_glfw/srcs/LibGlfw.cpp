@@ -108,7 +108,7 @@ LibGlfw::LibGlfw(int height, int width, std::string winName) : _win_height(heigh
     glfwSetKeyCallback(this->_window, LibGlfw::_key_callback);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, width, height, 0, -1, 1);
+    glOrtho(0, width, 0, height, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
     glClear( GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
@@ -147,7 +147,7 @@ void                LibGlfw::display(std::list<IGameObject*> const game_objects)
     std::map<type_e, std::map<cardinal_e, std::string> >::iterator		type;
     std::map<cardinal_e, std::string>::iterator							dir;
 
-    for (obj = game_objects.begin(); obj != game_objects.end(); obj++)
+    for (obj = game_objects.begin(); obj != game_objects.end(); ++obj)
     {
         type = LibGlfw::_sprites.find((*obj)->getType());
         if (type != LibGlfw::_sprites.end())
@@ -163,8 +163,21 @@ void                LibGlfw::display(std::list<IGameObject*> const game_objects)
 
 void                LibGlfw::display_score(std::list<int> const scores)
 {
-    //TODO
-    (void)scores;
+    std::stringstream           ss;
+
+    ss << "P1: " << scores.front();
+    glDisable(GL_TEXTURE_2D);
+    glColor3ub(255, 255, 255);
+    //glRasterPos2f(this->getScale(), this->_win_height - this->getScale());
+    glRasterPos2i(300,300);
+    for(size_t i = 0; i < ss.str().length(); i++)
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ss.str().at(i));
+    /*ss.str(std::string());
+    ss << "P2: " << scores.back();
+    glRasterPos2f(this->_win_width / 2, this->_win_height - this->getScale());
+    for(size_t i = 0; i < ss.str().length(); i++)
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ss.str().at(i));*/
+    glEnable(GL_TEXTURE_2D);
     return ;
 }
 
@@ -185,9 +198,9 @@ void                LibGlfw::_display_sprite(int const x, int const y, std::stri
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &(this->_sprite_id));
     glBindTexture(GL_TEXTURE_2D, this->_sprite_id);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.getWidth(), img.getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, img.getData());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -217,13 +230,13 @@ void                LibGlfw::_key_callback(GLFWwindow *win, int key, int scancod
 
 extern "C"
 {
-	IGraphicLib			*getDynLibPointer(int const x, int const  y, std::string const winName)
-	{
-		return new LibGlfw(x, y, winName);
-	}
+    IGraphicLib			*getDynLibPointer(int const x, int const  y, std::string const winName)
+    {
+        return new LibGlfw(x, y, winName);
+    }
 
-	void				delLibPointer(IGraphicLib *lib_ptr)
-	{
-		delete lib_ptr;
-	}
+    void				delLibPointer(IGraphicLib *lib_ptr)
+    {
+        delete lib_ptr;
+    }
 }

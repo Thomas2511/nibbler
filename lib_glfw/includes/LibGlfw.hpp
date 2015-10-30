@@ -14,6 +14,7 @@
 # define LIB_GLFW_HPP
 
 # include <map>
+# include <GLUT/glut.h>
 # include "GLFW/glfw3.h"
 # include "IGraphicLib.interface.hpp"
 # include "IGameObject.interface.hpp"

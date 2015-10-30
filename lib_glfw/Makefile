@@ -40,7 +40,7 @@ GLFW_FRAMEWORK	= -framework Cocoa -framework OpenGL -framework IOKit -framework 
 
 # general compilation flags
 INCFLAGS		= -I $(INCDIR) -I $(GLFW_LIB_DIR)/include
-CXXFLAGS		= -Wall -Wextra -Werror -std=c++11 -fPIC
+CXXFLAGS		= -Wall -Wextra -Werror -std=c++11 -fPIC -Wno-deprecated
 LDFLAGS			= -shared
 LINKING			= -lglfw3 $(GLFW_FRAMEWORK)
 
